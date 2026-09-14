@@ -23,6 +23,7 @@ function MemorialRow({ group }: { group: Group }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
   const rafRef = useRef<number | null>(null);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -50,22 +51,31 @@ function MemorialRow({ group }: { group: Group }) {
     rafRef.current = requestAnimationFrame(step);
     return () => {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
     };
   }, [group.direction]);
 
-  const pause = () => (pausedRef.current = true);
+  const pause = () => {
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    pausedRef.current = true;
+  };
   const resume = () => (pausedRef.current = false);
 
   const scrollBy = (dir: 1 | -1) => {
+    // Pause the auto-scroll for the duration of the smooth scroll, otherwise
+    // the animation loop overwrites scrollLeft on the very next frame and
+    // the click appears to do nothing.
+    pause();
     scrollerRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
+    resumeTimeoutRef.current = setTimeout(resume, 600);
   };
 
   const tiles = Array.from({ length: group.count }, (_, i) => i + 1);
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <h3 className="font-display text-lg uppercase tracking-wide text-paper/90 sm:text-xl">
+      <div className="mb-3 flex items-center justify-between gap-4">
+        <h3 className="font-display text-base uppercase tracking-wide text-paper/90 sm:text-lg">
           {group.heading}
         </h3>
         <div className="flex shrink-0 gap-2">
@@ -73,7 +83,7 @@ function MemorialRow({ group }: { group: Group }) {
             type="button"
             onClick={() => scrollBy(-1)}
             aria-label={`Scroll ${group.heading} left`}
-            className="flex h-9 w-9 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
+            className="flex h-8 w-8 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
           >
             &larr;
           </button>
@@ -81,7 +91,7 @@ function MemorialRow({ group }: { group: Group }) {
             type="button"
             onClick={() => scrollBy(1)}
             aria-label={`Scroll ${group.heading} right`}
-            className="flex h-9 w-9 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
+            className="flex h-8 w-8 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
           >
             &rarr;
           </button>
@@ -97,12 +107,12 @@ function MemorialRow({ group }: { group: Group }) {
         onTouchStart={pause}
         onTouchEnd={resume}
         tabIndex={-1}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]"
+        className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
       >
         {tiles.map((n) => (
           <div
             key={n}
-            className="relative aspect-[260/440] w-[7.5rem] shrink-0 snap-start overflow-hidden bg-black focus-within:ring-1 focus-within:ring-red-bright sm:w-36"
+            className="relative aspect-[260/440] w-16 shrink-0 snap-start overflow-hidden bg-black focus-within:ring-1 focus-within:ring-red-bright sm:w-20 md:w-24"
             tabIndex={0}
           >
             <Image
@@ -110,7 +120,7 @@ function MemorialRow({ group }: { group: Group }) {
               alt="Portrait and name of a fallen Duvdevan member, as printed in the book's memorial page"
               fill
               className="object-cover"
-              sizes="150px"
+              sizes="96px"
               loading="lazy"
             />
           </div>
@@ -122,27 +132,27 @@ function MemorialRow({ group }: { group: Group }) {
 
 export function Memorial() {
   return (
-    <section id="memorial" className="ground-dark relative py-24 md:py-32">
+    <section id="memorial" className="ground-dark relative py-14 md:py-20">
       <Container>
-        <div className="mb-14 max-w-2xl">
-          <div className="mb-6 flex items-center gap-3">
+        <div className="mb-8 max-w-2xl">
+          <div className="mb-4 flex items-center gap-3">
             <span className="chapter-bar h-px w-10" />
             <span className="font-display text-xs uppercase tracking-[0.3em] text-red-bright">In Memory</span>
           </div>
-          <h2 className="font-display text-4xl uppercase leading-[1.08] text-paper sm:text-5xl">
+          <h2 className="font-display text-3xl uppercase leading-[1.08] text-paper sm:text-4xl">
             In Memory of the Unit&rsquo;s Fallen
           </h2>
-          <p className="font-body mt-6 text-base leading-relaxed text-paper/70 sm:text-lg">
+          <p className="font-body mt-4 text-sm leading-relaxed text-paper/70 sm:text-base">
             They belong not only to the unit&rsquo;s past. They are part of its identity,
             the path it has taken, and the meaning it continues to carry today.
           </p>
-          <p className="font-body mt-3 text-sm text-paper/45">
+          <p className="font-body mt-2 text-xs text-paper/45">
             Names and ranks are shown exactly as printed in the book&rsquo;s memorial page, in
             their original Hebrew.
           </p>
         </div>
 
-        <div className="flex flex-col gap-14">
+        <div className="flex flex-col gap-8">
           {GROUPS.map((g) => (
             <MemorialRow key={g.key} group={g} />
           ))}
