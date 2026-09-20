@@ -1,163 +1,89 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/duvdevan/Reveal";
 
-type Group = {
-  key: string;
-  heading: string;
-  count: number;
-  prefix: string;
-  direction: 1 | -1;
-};
-
-const GROUPS: Group[] = [
-  { key: "fallen", heading: "Fallen of the Duvdevan Unit", count: 31, prefix: "fallen", direction: 1 },
-  { key: "wars", heading: "Duvdevan Alumni Who Fell in Israel's Wars", count: 12, prefix: "wars", direction: -1 },
-  { key: "terror", heading: "Duvdevan Alumni, Victims of Terror", count: 5, prefix: "terror", direction: 1 },
-];
-
-function MemorialRow({ group }: { group: Group }) {
-  const scrollerRef = useRef<HTMLDivElement>(null);
-  const pausedRef = useRef(false);
-  const rafRef = useRef<number | null>(null);
-  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
-    const el = scrollerRef.current;
-    if (!el) return;
-
-    let last = performance.now();
-    const speed = 28; // px/sec
-
-    const step = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      if (!pausedRef.current) {
-        const max = el.scrollWidth - el.clientWidth;
-        if (max > 0) {
-          let next = el.scrollLeft + group.direction * speed * dt;
-          if (next >= max) next = 0;
-          if (next <= 0) next = max;
-          el.scrollLeft = next;
-        }
-      }
-      rafRef.current = requestAnimationFrame(step);
-    };
-    rafRef.current = requestAnimationFrame(step);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    };
-  }, [group.direction]);
-
-  const pause = () => {
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
-    pausedRef.current = true;
-  };
-  const resume = () => (pausedRef.current = false);
-
-  const scrollBy = (dir: 1 | -1) => {
-    // Pause the auto-scroll for the duration of the smooth scroll, otherwise
-    // the animation loop overwrites scrollLeft on the very next frame and
-    // the click appears to do nothing.
-    pause();
-    scrollerRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
-    resumeTimeoutRef.current = setTimeout(resume, 600);
-  };
-
-  const tiles = Array.from({ length: group.count }, (_, i) => i + 1);
-
-  return (
-    <div>
-      <div className="mb-3 flex items-center justify-between gap-4">
-        <h3 className="font-display text-base uppercase tracking-wide text-paper/90 sm:text-lg">
-          {group.heading}
-        </h3>
-        <div className="flex shrink-0 gap-2">
-          <button
-            type="button"
-            onClick={() => scrollBy(-1)}
-            aria-label={`Scroll ${group.heading} left`}
-            className="flex h-8 w-8 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
-          >
-            &larr;
-          </button>
-          <button
-            type="button"
-            onClick={() => scrollBy(1)}
-            aria-label={`Scroll ${group.heading} right`}
-            className="flex h-8 w-8 items-center justify-center border border-paper/25 text-paper/70 transition-colors hover:border-paper hover:text-paper"
-          >
-            &rarr;
-          </button>
-        </div>
-      </div>
-
-      <div
-        ref={scrollerRef}
-        onMouseEnter={pause}
-        onMouseLeave={resume}
-        onFocus={pause}
-        onBlur={resume}
-        onTouchStart={pause}
-        onTouchEnd={resume}
-        tabIndex={-1}
-        className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:thin]"
-      >
-        {tiles.map((n) => (
-          <div
-            key={n}
-            className="relative aspect-[260/440] w-16 shrink-0 snap-start overflow-hidden bg-black focus-within:ring-1 focus-within:ring-red-bright sm:w-20 md:w-24"
-            tabIndex={0}
-          >
-            <Image
-              src={withBasePath(`/photos/duvdevan/memorial/${group.prefix}-${String(n).padStart(2, "0")}.webp`)}
-              alt="Portrait and name of a fallen Duvdevan member, as printed in the book's memorial page"
-              fill
-              className="object-cover"
-              sizes="96px"
-              loading="lazy"
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const ALT_TEXT =
+  "The book's memorial page: portraits and names of the fallen of the Duvdevan Unit, Duvdevan alumni who fell in Israel's wars, and Duvdevan alumni who were victims of terror, presented exactly as printed";
 
 export function Memorial() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <section id="memorial" className="ground-dark relative py-14 md:py-20">
+    <section id="memorial" className="ground-dark relative py-20 md:py-28">
       <Container>
-        <div className="mb-8 max-w-2xl">
-          <div className="mb-4 flex items-center gap-3">
+        <Reveal className="mx-auto mb-10 max-w-2xl text-center">
+          <div className="mb-4 flex items-center justify-center gap-3">
             <span className="chapter-bar h-px w-10" />
             <span className="font-display text-xs uppercase tracking-[0.3em] text-red-bright">In Memory</span>
+            <span className="chapter-bar h-px w-10" />
           </div>
-          <h2 className="font-display text-3xl uppercase leading-[1.08] text-paper sm:text-4xl">
+          <h2 className="font-display text-3xl uppercase leading-[1.08] text-paper sm:text-4xl md:text-5xl">
             In Memory of the Unit&rsquo;s Fallen
           </h2>
-          <p className="font-body mt-4 text-sm leading-relaxed text-paper/70 sm:text-base">
+          <p className="font-body mt-5 text-base leading-relaxed text-paper/70 sm:text-lg">
             They belong not only to the unit&rsquo;s past. They are part of its identity,
             the path it has taken, and the meaning it continues to carry today.
           </p>
-          <p className="font-body mt-2 text-xs text-paper/45">
-            Names and ranks are shown exactly as printed in the book&rsquo;s memorial page, in
-            their original Hebrew.
-          </p>
-        </div>
+        </Reveal>
 
-        <div className="flex flex-col gap-8">
-          {GROUPS.map((g) => (
-            <MemorialRow key={g.key} group={g} />
-          ))}
-        </div>
+        <Reveal delayMs={150}>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            className="group relative mx-auto block w-full overflow-hidden bg-black shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] ring-1 ring-white/10 focus-visible:ring-2 focus-visible:ring-red-alert"
+            aria-label="Open the memorial page at full size"
+          >
+            <Image
+              src={withBasePath("/photos/duvdevan/memorial/memorial-wall.webp")}
+              alt={ALT_TEXT}
+              width={2600}
+              height={1838}
+              className="h-auto w-full"
+              sizes="(max-width: 1600px) 100vw, 1600px"
+            />
+            <div className="pointer-events-none absolute inset-0 flex items-end justify-center bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+              <span className="font-display mb-4 border border-paper/40 px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-paper sm:mb-6 sm:text-xs">
+                Tap to View Full Size
+              </span>
+            </div>
+          </button>
+          <p className="font-body mx-auto mt-4 max-w-2xl text-center text-xs text-paper/45">
+            Presented exactly as it appears in the book&rsquo;s memorial page, in its original
+            Hebrew. Tap the image to read every name at full size.
+          </p>
+        </Reveal>
       </Container>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 overflow-auto bg-black/95 p-4 md:p-10"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Memorial page, full size"
+          onClick={() => setOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            aria-label="Close"
+            className="fixed right-5 top-5 z-10 font-display text-3xl text-paper/80 hover:text-paper"
+          >
+            &times;
+          </button>
+          <Image
+            src={withBasePath("/photos/duvdevan/memorial/memorial-wall.webp")}
+            alt={ALT_TEXT}
+            width={2600}
+            height={1838}
+            className="mx-auto w-[2600px] max-w-none cursor-zoom-out"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 }

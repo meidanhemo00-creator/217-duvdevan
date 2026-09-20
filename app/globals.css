@@ -5,6 +5,10 @@
   --color-paper: #f1efeb;
   --color-red: #a3241f;
   --color-red-bright: #c1352b;
+  /* Lighter than red-bright specifically so functional alert text (form
+     errors, validation states) clears WCAG AA contrast at small sizes on
+     dark backgrounds; red-bright stays reserved for larger/decorative use. */
+  --color-red-alert: #e2685c;
   --color-charcoal: #1c1b19;
   --color-archive: #a8a29a;
 
@@ -28,6 +32,13 @@ body {
 ::selection {
   background: var(--color-red);
   color: var(--color-paper);
+}
+
+/* Keyboard focus should always be visible, on every interactive element,
+   regardless of a component's own hover/border styling. */
+:focus-visible {
+  outline: 2px solid var(--color-red-alert);
+  outline-offset: 2px;
 }
 
 ::-webkit-scrollbar {

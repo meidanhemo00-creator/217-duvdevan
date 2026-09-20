@@ -3,14 +3,13 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
-import { PURCHASE_URL } from "@/lib/purchase";
 import { Container } from "@/components/Container";
 
 const LINKS = [
   { href: "#about", label: "About" },
   { href: "#story", label: "The Story" },
   { href: "#memorial", label: "In Memory" },
-  { href: "#purchase", label: "Purchase" },
+  { href: "#presale", label: "Presale" },
 ];
 
 export function Nav() {
@@ -53,10 +52,10 @@ export function Nav() {
             </a>
           ))}
           <a
-            href={PURCHASE_URL}
+            href="#presale"
             className="font-display rounded-none border border-red bg-red px-5 py-2.5 text-sm uppercase tracking-wider text-paper transition-colors hover:bg-red-bright"
           >
-            Purchase the Book
+            Join the Presale
           </a>
         </nav>
 
@@ -95,11 +94,11 @@ export function Nav() {
               </a>
             ))}
             <a
-              href={PURCHASE_URL}
+              href="#presale"
               onClick={() => setOpen(false)}
               className="font-display mt-2 inline-block bg-red px-5 py-3 text-center text-sm uppercase tracking-wider text-paper"
             >
-              Purchase the Book
+              Join the Presale
             </a>
           </Container>
         </div>

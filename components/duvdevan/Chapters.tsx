@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/duvdevan/Reveal";
 
 const CHAPTERS = [
   {
@@ -46,7 +47,7 @@ export function Chapters() {
   return (
     <section id="story" className="ground-dark relative overflow-hidden py-24 md:py-32">
       <Container>
-        <div className="mb-16 max-w-2xl">
+        <Reveal className="mb-16 max-w-2xl">
           <div className="mb-6 flex items-center gap-3">
             <span className="chapter-bar h-px w-10" />
             <span className="font-display text-xs uppercase tracking-[0.3em] text-red-bright">
@@ -56,7 +57,7 @@ export function Chapters() {
           <h2 className="font-display text-4xl uppercase leading-[1.08] text-paper sm:text-5xl">
             Five Chapters of an Unfinished Story
           </h2>
-        </div>
+        </Reveal>
 
         {/* Desktop: slightly rotated cards, photo and label kept in separate
             layers so overlap is purely decorative and never covers a title. */}

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/duvdevan/Reveal";
 
 type GalleryImage = {
   file: string;
@@ -47,7 +48,7 @@ export function Gallery() {
   return (
     <section id="gallery" className="ground-dark py-24 md:py-32">
       <Container>
-        <div className="mb-14 max-w-2xl">
+        <Reveal className="mb-14 max-w-2xl">
           <div className="mb-6 flex items-center gap-3">
             <span className="chapter-bar h-px w-10" />
             <span className="font-display text-xs uppercase tracking-[0.3em] text-red-bright">
@@ -57,7 +58,7 @@ export function Gallery() {
           <h2 className="font-display text-4xl uppercase leading-[1.08] text-paper sm:text-5xl">
             Photographs From Four Decades
           </h2>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-2 gap-3 md:auto-rows-[14rem] md:grid-cols-4 md:gap-4">
           {IMAGES.map((img, i) => (

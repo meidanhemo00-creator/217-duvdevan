@@ -1,12 +1,13 @@
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
 import { Container } from "@/components/Container";
+import { Reveal } from "@/components/duvdevan/Reveal";
 
 export function Introduction() {
   return (
     <section id="about" className="ground-paper relative overflow-hidden py-24 md:py-36">
       <Container className="grid gap-16 md:grid-cols-12 md:gap-8">
-        <div className="md:col-span-7 lg:col-span-6">
+        <Reveal className="md:col-span-7 lg:col-span-6">
           <div className="mb-6 flex items-center gap-3">
             <span className="chapter-bar h-px w-10" />
             <span className="font-display text-xs uppercase tracking-[0.3em] text-red">Prologue</span>
@@ -30,9 +31,9 @@ export function Introduction() {
             judgment matter most. This book brings together the photographs, operations,
             turning points and people that shaped the unit from 1986 to the present day.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="relative md:col-span-5 lg:col-span-6">
+        <Reveal delayMs={150} className="relative md:col-span-5 lg:col-span-6">
           <div className="relative ml-auto aspect-[4/5] w-full max-w-md translate-x-0 md:translate-x-10">
             <Image
               src={withBasePath("/photos/duvdevan/gallery/gallery-01.webp")}
@@ -43,7 +44,7 @@ export function Introduction() {
             />
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-ink/10" />
           </div>
-        </div>
+        </Reveal>
       </Container>
     </section>
   );

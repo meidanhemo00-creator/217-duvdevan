@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { withBasePath } from "@/lib/basePath";
-import { PURCHASE_URL } from "@/lib/purchase";
 import { Container } from "@/components/Container";
 
 export function Hero() {
@@ -41,6 +40,13 @@ export function Hero() {
       <Container className="relative z-10 grid items-center gap-12 py-32 md:grid-cols-2 md:py-24">
         {/* Copy */}
         <div className="order-2 md:order-1">
+          <div className="mb-6 flex items-center gap-3 motion-safe:animate-[dedicationRise_1s_ease-out_both]">
+            <span className="h-px w-8 bg-red-bright/80" />
+            <p className="font-display text-xs uppercase tracking-[0.28em] text-paper sm:text-sm">
+              Dedicated to the Memory of Our Fallen
+            </p>
+          </div>
+
           <p className="font-display mb-5 text-xs uppercase tracking-[0.3em] text-red-bright md:text-sm">
             40 Years of the Duvdevan Unit
           </p>
@@ -57,10 +63,10 @@ export function Hero() {
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
             <a
-              href={PURCHASE_URL}
+              href="#presale"
               className="font-display bg-red px-7 py-3.5 text-sm uppercase tracking-wider text-paper transition-colors hover:bg-red-bright"
             >
-              Purchase the Book
+              Join the Presale
             </a>
             <a
               href="#about"
@@ -123,6 +129,10 @@ export function Hero() {
           0% { transform: translateY(-100%); }
           60% { transform: translateY(100%); }
           100% { transform: translateY(100%); }
+        }
+        @keyframes dedicationRise {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </section>
